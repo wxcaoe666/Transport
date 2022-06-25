@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.dao.IAccidentDao">
+
+    <resultMap id="BaseResultMap" type="com.model.Accidentlist">
+        <id column="ID" property="ID" jdbcType="INTEGER"/>
+        <result column="DeleteFlag" property="DeleteFlag" jdbcType="INTEGER"/>
+        <result column="UserID" property="UserID" jdbcType="INTEGER"/>
+        <result column="Name" property="Name" jdbcType="VARCHAR"/>
+        <result column="AccidentCause" property="AccidentCause" jdbcType="VARCHAR"/>
+        <result column="AccidentResult" property="AccidentResult" jdbcType="VARCHAR"/>
+        <result column="PlateNumber" property="PlateNumber" jdbcType="VARCHAR"/>
+        <result column="AccidentAddress" property="AccidentAddress" jdbcType="VARCHAR"/>
+        <result column="VehicleID" property="VehicleID" jdbcType="INTEGER"/>
+        <result column="LossAmount" property="LossAmount" jdbcType="INTEGER"/>
+        <result column="AccidentDate" property="AccidentDate" jdbcType="TIMESTAMP"/>
+        <result column="CreateDate" property="CreateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="com.model.Accident">
+        <id column="ID" property="ID" jdbcType="INTEGER"/>
+        <result column="DeleteFlag" property="DeleteFlag" jdbcType="INTEGER"/>
+        <result column="UserID" property="UserID" jdbcType="INTEGER"/>
+        <result column="AccidentCause" property="AccidentCause" jdbcType="VARCHAR"/>
+        <result column="AccidentResult" property="AccidentResult" jdbcType="VARCHAR"/>
+        <result column="AccidentAddress" property="AccidentAddress" jdbcType="VARCHAR"/>
+        <result column="VehicleID" property="VehicleID" jdbcType="INTEGER"/>
+        <result column="LossAmount" property="LossAmount" jdbcType="INTEGER"/>
+        <result column="AccidentDate" property="AccidentDate" jdbcType="TIMESTAMP"/>
+        <result column="CreateDate" property="CreateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+<!--所有未删除的事故记录-->
+    <select id="getalllist" resultMap="BaseResultMap">
+        SELECT
+            a.ID as ID,
+            a.DeleteFlag as DeleteFlag,
+            a.UserID as UserID,
+            b.Name as Name,
+            a.AccidentCause as AccidentCause,
+            c.PlateNumber as PlateNumber,
+            a.LossAmount as LossAmount,
+            a.VehicleID as VehicleID,
+            a.AccidentDate as AccidentDate,
+            a.AccidentResult as AccidentResult,
+            a.AccidentAddress as AccidentAddress,
+            a.CreateDate as CreateDate
+        FROM
+            accident as a left join user as b on a.UserID=b.ID
+                              left join vehicle as c on a.VehicleID=c.ID
+        WHERE a.DeleteFlag=0 order by CreateDate asc
+    </select>
+
+    <!--个人所有事故记录-->
+    <select id="getalllistbyid" resultMap="BaseResultMap" parameterType="int">
+        SELECT
+            a.ID as ID,
+            a.DeleteFlag as DeleteFlag,
+            a.UserID as UserID,
+            b.Name as Name,
+            a.AccidentCause as AccidentCause,
+            c.PlateNumber as PlateNumber,
+            a.LossAmount as LossAmount,
+            a.VehicleID as VehicleID,
+            a.AccidentDate as AccidentDate,
+            a.AccidentResult as AccidentResult,
+            a.AccidentAddress as AccidentAddress,
+            a.CreateDate as CreateDate
+        FROM
+            accident as a left join user as b on a.UserID=b.ID
+                              left join vehicle as c on a.VehicleID=c.ID
+        WHERE a.DeleteFlag=0 and a.UserID=#{UserID} order by CreateDate asc
+    </select>
+
+    <!-- 根据ID查询事故记录  -->
+    <select id="selectaccidentbyID" parameterType="int" resultMap="BaseResultMap1">
+        select *
+        from accident
+        where DeleteFlag = 0
+          and ID = #{ID}
+    </select>
+
+    <!--修改事故记录-->
+    <update id="updateaccident" useGeneratedKeys="true" flushCache="true" parameterType="com.model.Accident">
+        update accident
+        set VehicleID=#{VehicleID},
+            AccidentCause=#{AccidentCause},
+            LossAmount=#{LossAmount},
+            AccidentDate=#{AccidentDate},
+            AccidentResult=#{AccidentResult},
+            AccidentAddress=#{AccidentAddress}
+            where ID = #{ID}
+    </update>
+
+    <insert id="addaccident" useGeneratedKeys="true" parameterType="com.model.Accident">
+        insert into accident (ID,DeleteFlag,UserID,AccidentCause,LossAmount,VehicleID,AccidentDate,CreateDate,AccidentAddress,AccidentResult)
+            value (#{ID},#{DeleteFlag},#{UserID},#{AccidentCause},#{LossAmount},#{VehicleID},#{AccidentDate},#{CreateDate},#{AccidentAddress},#{AccidentResult})
+    </insert>
+
+    <!--删除违章记录-->
+    <update id="deleteaccident" useGeneratedKeys="true">
+        update accident set DeleteFlag=1 where ID=#{ID}
+    </update>
+<!--    <update id="updateUser" parameterType="com.model.User" flushCache="true">
+        UPDATE user set
+                        email = #{email},
+                        password = #{password},
+                        username = #{username},
+                        role = #{role},
+                        status = #{status},
+                        regTime = #{regTime},
+                        regIp = #{regIp}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteUser"  parameterType="int" flushCache="true" >
+        update user set DeletFlag=1 where id = #{id}
+    </update>-->
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.dao.IUserDao">
+
+    <resultMap id="BaseResultMap" type="com.model.User">
+        <id column="ID" property="ID" jdbcType="INTEGER"/>
+        <result column="UserName" property="UserName" jdbcType="VARCHAR"/>
+        <result column="Password" property="Password" jdbcType="VARCHAR"/>
+        <result column="Email" property="Email" jdbcType="VARCHAR"/>
+        <result column="DeleteFlag" property="DeleteFlag" jdbcType="INTEGER"/>
+        <result column="Sex" property="Sex" jdbcType="INTEGER"/>
+        <result column="Age" property="Age" jdbcType="INTEGER"/>
+        <result column="Role" property="Role" jdbcType="VARCHAR"/>
+        <result column="Guid" property="Guid" jdbcType="VARCHAR"/>
+        <result column="CreateTime" property="CreateTime" jdbcType="TIMESTAMP"/>
+        <result column="Name" property="Name" jdbcType="VARCHAR"/>
+        <result column="Phone" property="Phone" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="com.model.HeadPortraits">
+        <id column="ID" property="ID" jdbcType="INTEGER"/>
+        <result column="UserID" property="UserID" jdbcType="INTEGER"/>
+        <result column="Picture" property="Picture" jdbcType="LONGVARBINARY"/>
+    </resultMap>
+
+
+    <select id="selectUser" parameterType="String" resultMap="BaseResultMap">
+        SELECT *
+        FROM user
+        WHERE UserName = #{UserName}
+          and DeleteFlag = 0
+    </select>
+
+    <select id="selectuserbyID" parameterType="int" resultMap="BaseResultMap">
+        SELECT *
+        FROM user
+        WHERE ID = #{ID}
+          and DeleteFlag = 0
+    </select>
+
+    <select id="getlist" resultMap="BaseResultMap" parameterType="com.model.Userselect">
+        SELECT * FROM user WHERE DeleteFlag=0
+        <if test="selectname!=null and selectname!=''">
+            AND Name like #{selectname}
+        </if>
+        <if test="selectage!=null and selectage!=0">
+            AND Age = #{selectage}
+        </if>
+        <if test="selectsex!=null and selectsex!=3">
+            AND Sex = #{selectsex}
+        </if>
+        <if test="selectrole!=null and selectrole!=''">
+            AND Role = #{selectrole}
+        </if>
+    </select>
+
+    <select id="login" resultMap="BaseResultMap">
+        SELECT *
+        FROM user
+        WHERE UserName = #{UserName}
+          and Password = #{Password}
+          and DeleteFlag = 0
+    </select>
+
+    <insert id="register" parameterType="com.model.User" flushCache="true" useGeneratedKeys="true" keyProperty="ID">
+        INSERT INTO user
+        (Email, Password, UserName, Role, DeleteFlag, CreateTime, Guid, Sex, Name, Phone, Age)
+            VALUE (#{Email},#{Password},#{UserName},#{Role},#{DeleteFlag},#{CreateTime},#{Guid},#{Sex},#{Name},#{Phone},#{Age})
+    </insert>
+
+<!--  修改用户信息  -->
+    <update id="updateUser" parameterType="com.model.User" flushCache="true" useGeneratedKeys="true">
+        UPDATE user
+        set Email    = #{Email},
+            Password = #{Password},
+            Sex      = #{Sex},
+            Name=#{Name},
+            Phone    = #{Phone},
+            Age=#{Age}
+            WHERE ID = #{ID}
+    </update>
+
+    <update id="updateRole" parameterType="com.model.User" flushCache="true" useGeneratedKeys="true">
+        UPDATE user
+        set Role=#{Role}
+        WHERE ID = #{ID}
+    </update>
+
+    <!--    <update id="deleteUser"  parameterType="int" flushCache="true" >
+          update user set DeletFlag=1 where id = #{id}
+      </update>-->
+<!--  新增头像  -->
+    <insert id="addheadportraits" parameterType="com.model.HeadPortraits" flushCache="true" useGeneratedKeys="true"
+            keyProperty="ID">
+        INSERT INTO headportraits
+            (Picture, UserID)
+            VALUE (#{Picture},#{UserID})
+    </insert>
+
+    <!--  修改头像  -->
+    <update id="updateheadportraits" parameterType="com.model.HeadPortraits" flushCache="true" useGeneratedKeys="true">
+        UPDATE headportraits
+        set Picture=#{Picture}
+        WHERE UserID = #{UserID}
+    </update>
+    <!--  根据userID查询头像  -->
+    <select id="selectheadportraitsbyUserID" parameterType="int" resultMap="BaseResultMap1">
+        SELECT *
+        FROM headportraits
+        WHERE UserID = #{UserID}
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.dao.IIntroduceDao">
+
+    <resultMap id="BaseResultMap" type="com.model.Introduce">
+        <id column="ID" property="ID" jdbcType="INTEGER"/>
+        <result column="UserID" property="UserID" jdbcType="INTEGER"/>
+        <result column="IntroOne" property="IntroOne" jdbcType="VARCHAR"/>
+        <result column="IntroTwo" property="IntroTwo" jdbcType="VARCHAR"/>
+        <result column="IntroThree" property="IntroThree" jdbcType="VARCHAR"/>
+        <result column="IntroFour" property="IntroFour" jdbcType="VARCHAR"/>
+        <result column="IntroFive" property="IntroFive" jdbcType="VARCHAR"/>
+        <result column="IntroSix" property="IntroSix" jdbcType="VARCHAR"/>
+        <result column="IntroSeven" property="IntroSeven" jdbcType="VARCHAR"/>
+        <result column="IntroEight" property="IntroEight" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getintroducebyuserid" parameterType="int" resultMap="BaseResultMap">
+        select *
+        from introduce
+        where UserID = #{UserID}
+    </select>
+
+    <insert id="addintroducen" useGeneratedKeys="true" parameterType="com.model.Introduce"  keyProperty="ID">
+        insert into introduce (UserID, IntroOne, IntroTwo, IntroThree, IntroFour, IntroFive, IntroSix, IntroSeven,IntroEight)
+            value (#{UserID},#{IntroOne},#{IntroTwo},#{IntroThree},#{IntroFour},#{IntroFive},#{IntroSix},#{IntroSeven},#{IntroEight})
+    </insert>
+
+    <!--修改个人介绍-->
+    <update id="updateintroduce" useGeneratedKeys="true">
+        update introduce
+        set IntroOne=#{IntroOne},
+            IntroTwo=#{IntroTwo},
+            IntroThree=#{IntroThree},
+            IntroFour=#{IntroFour},
+            IntroFive=#{IntroFive},
+            IntroSix=#{IntroSix},
+            IntroSeven =#{IntroSeven},
+            IntroEight=#{IntroEight}
+        where ID = #{ID}
+    </update>
+</mapper>

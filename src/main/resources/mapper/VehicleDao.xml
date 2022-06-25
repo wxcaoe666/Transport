@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.dao.IVehicleDao">
+
+    <resultMap id="BaseResultMap" type="com.model.Vehicle">
+        <id column="ID" property="ID" jdbcType="INTEGER"/>
+        <result column="DeleteFlag" property="DeleteFlag" jdbcType="INTEGER"/>
+        <result column="UserID" property="UserID" jdbcType="INTEGER"/>
+        <result column="PlateNumber" property="PlateNumber" jdbcType="VARCHAR"/>
+        <result column="PurchasingPrice" property="PurchasingPrice" jdbcType="INTEGER"/>
+        <result column="Purchaser" property="Purchaser" jdbcType="VARCHAR"/>
+        <result column="PurchasingDate" property="PurchasingDate" jdbcType="TIMESTAMP"/>
+        <result column="Vehiclebrand" property="Vehiclebrand" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <update id="updatevehicle" parameterType="com.model.Vehicle" flushCache="true" useGeneratedKeys="true">
+        UPDATE vehicle
+        set UserID          = #{UserID},
+            PlateNumber     = #{PlateNumber},
+            PurchasingPrice = #{PurchasingPrice},
+            Purchaser=#{Purchaser},
+            Vehiclebrand    = #{Vehiclebrand},
+            Vehiclebrand=#{Vehiclebrand}
+            WHERE ID = #{ID}
+    </update>
+
+    <!--  根据车牌查询车辆  -->
+    <select id="selectvehicle" parameterType="String" resultMap="BaseResultMap">
+        SELECT *
+        FROM vehicle
+        WHERE PlateNumber = #{PlateNumber}
+          and DeleteFlag = 0
+    </select>
+
+    <select id="selectvehiclebyID" parameterType="int" resultMap="BaseResultMap">
+        SELECT *
+        FROM vehicle
+        WHERE ID = #{ID}
+          and DeleteFlag = 0
+    </select>
+
+    <select id="getlist" resultMap="BaseResultMap" parameterType="com.model.Vehicleselect">
+        SELECT * FROM vehicle WHERE DeleteFlag=0
+        <if test="selectname!=null and selectname!=''">
+            AND Purchaser like #{selectname}
+        </if>
+        <!--        <if test="selectid!=null and selectid!=0">-->
+        <!--            AND ID = #{selectid}-->
+        <!--        </if>-->
+        <if test="selectid!=null and selectid!=0">
+            AND UserID=#{selectid}
+        </if>
+        <if test="selectbrand!=null and selectbrand!=''">
+            AND Vehiclebrand like #{selectbrand}
+        </if>
+        <if test="selectnum!=null and selectnum!=''">
+            AND PlateNumber like #{selectnum}
+        </if>
+    </select>
+
+    <!-- 新增车辆   -->
+    <insert id="addvehicle" parameterType="com.model.Vehicle" flushCache="true" useGeneratedKeys="true"
+            keyProperty="ID">
+        INSERT INTO vehicle
+        (UserID, PlateNumber, PurchasingPrice, Purchaser, PurchasingDate, Vehiclebrand, DeleteFlag)
+            VALUE (#{UserID},#{PlateNumber},#{PurchasingPrice},#{Purchaser},#{PurchasingDate},#{Vehiclebrand},#{DeleteFlag})
+    </insert>
+
+    <!--删除车辆-->
+    <update id="deletevehicle" useGeneratedKeys="true">
+        update vehicle
+        set DeleteFlag=1
+        where ID = #{ID}
+    </update>
+
+    <!--修改车辆用户-->
+    <update id="updatevehicleuserid" useGeneratedKeys="true">
+        update vehicle
+        set UserID=#{UserID}
+        where ID = #{VehicleID}
+    </update>
+
+</mapper>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.dao.IStatisticsDao">
+
+    <resultMap id="BaseResultMap" type="com.model.Count">
+        <result column="AccidentCount" property="AccidentCount" jdbcType="INTEGER"/>
+        <result column="MaintainCount" property="MaintainCount" jdbcType="INTEGER"/>
+        <result column="ViolationCount" property="ViolationCount" jdbcType="INTEGER"/>
+        <result column="OutcarrecordCount" property="OutcarrecordCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="com.model.MonthCount">
+        <result column="JanCount" property="JanCount" jdbcType="INTEGER"/>
+        <result column="FebCount" property="FebCount" jdbcType="INTEGER"/>
+        <result column="MarCount" property="MarCount" jdbcType="INTEGER"/>
+        <result column="AprCount" property="AprCount" jdbcType="INTEGER"/>
+        <result column="MayCount" property="MayCount" jdbcType="INTEGER"/>
+        <result column="JunCount" property="JunCount" jdbcType="INTEGER"/>
+        <result column="JulCount" property="JulCount" jdbcType="INTEGER"/>
+        <result column="AugCount" property="AugCount" jdbcType="INTEGER"/>
+        <result column="SepCount" property="SepCount" jdbcType="INTEGER"/>
+        <result column="OctCount" property="OctCount" jdbcType="INTEGER"/>
+        <result column="NovCount" property="NovCount" jdbcType="INTEGER"/>
+        <result column="DecCount" property="DecCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <!--年内所有用户事件记录-->
+    <select id="getcount" resultMap="BaseResultMap" parameterType="Date">
+        SELECT count(*)                                                                    AccidentCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{starttime} and #{endtime}) MaintainCount,
+               (SELECT count(*)
+                from violation
+                where DeleteFlag = 0 and CreateDate between #{starttime} and #{endtime})   ViolationCount,
+               (select count(*)
+                from outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{starttime} and #{endtime})   OutcarrecordCount
+        from accident
+        where DeleteFlag = 0
+          and CreateDate between #{starttime} and #{endtime}
+    </select>
+
+    <!--年内每月所有出车记录-->
+    <select id="getmonthcount1" resultMap="BaseResultMap1" parameterType="com.model.Month">
+        SELECT count(*)                                                                    DecCount,
+               (select count(*)
+                FROM outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Jan} and #{Feb}) JanCount,
+               (select count(*)
+                FROM outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Feb} and #{Mar}) FebCount,
+               (select count(*)
+                FROM outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Mar} and #{Apr}) MarCount,
+               (select count(*)
+                FROM outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Apr} and #{May}) AprCount,
+               (select count(*)
+                FROM outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{May} and #{Jun}) MayCount,
+               (select count(*)
+                FROM outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Jun} and #{Jul}) JunCount,
+               (select count(*)
+                FROM outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Jul} and #{Aug}) JulCount,
+               (SELECT count(*)
+                from outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Aug} and #{Sep})   AugCount,
+               (select count(*)
+                from outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Sep} and #{Oct})   SepCount,
+               (select count(*)
+                from outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Oct} and #{Nov})   OctCount,
+               (select count(*)
+                from outcarrecord
+                where DeleteFlag = 0 and CreateDate between #{Nov} and #{Dec})   NovCount
+        from outcarrecord
+        where DeleteFlag = 0
+          and CreateDate between #{Dec} and #{EndDec}
+    </select>
+
+    <!--年内每月所有维修记录-->
+    <select id="getmonthcount2" resultMap="BaseResultMap1" parameterType="com.model.Month">
+        SELECT count(*)                                                                    DecCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{Jan} and #{Feb}) JanCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{Feb} and #{Mar}) FebCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{Mar} and #{Apr}) MarCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{Apr} and #{May}) AprCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{May} and #{Jun}) MayCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{Jun} and #{Jul}) JunCount,
+               (select count(*)
+                FROM maintain
+                where DeleteFlag = 0 and MaintainDate between #{Jul} and #{Aug}) JulCount,
+               (SELECT count(*)
+                from maintain
+                where DeleteFlag = 0 and MaintainDate between #{Aug} and #{Sep})   AugCount,
+               (select count(*)
+                from maintain
+                where DeleteFlag = 0 and MaintainDate between #{Sep} and #{Oct})   SepCount,
+               (select count(*)
+                from maintain
+                where DeleteFlag = 0 and MaintainDate between #{Oct} and #{Nov})   OctCount,
+               (select count(*)
+                from maintain
+                where DeleteFlag = 0 and MaintainDate between #{Nov} and #{Dec})   NovCount
+        from maintain
+        where DeleteFlag = 0
+          and MaintainDate between #{Dec} and #{EndDec}
+    </select>
+
+
+    <!--年内每月所有违章记录-->
+    <select id="getmonthcount3" resultMap="BaseResultMap1" parameterType="com.model.Month">
+        SELECT count(*)                                                                    DecCount,
+               (select count(*)
+                FROM violation
+                where DeleteFlag = 0 and CreateDate between #{Jan} and #{Feb}) JanCount,
+               (select count(*)
+                FROM violation
+                where DeleteFlag = 0 and CreateDate between #{Feb} and #{Mar}) FebCount,
+               (select count(*)
+                FROM violation
+                where DeleteFlag = 0 and CreateDate between #{Mar} and #{Apr}) MarCount,
+               (select count(*)
+                FROM violation
+                where DeleteFlag = 0 and CreateDate between #{Apr} and #{May}) AprCount,
+               (select count(*)
+                FROM violation
+                where DeleteFlag = 0 and CreateDate between #{May} and #{Jun}) MayCount,
+               (select count(*)
+                FROM violation
+                where DeleteFlag = 0 and CreateDate between #{Jun} and #{Jul}) JunCount,
+               (select count(*)
+                FROM violation
+                where DeleteFlag = 0 and CreateDate between #{Jul} and #{Aug}) JulCount,
+               (SELECT count(*)
+                from violation
+                where DeleteFlag = 0 and CreateDate between #{Aug} and #{Sep})   AugCount,
+               (select count(*)
+                from violation
+                where DeleteFlag = 0 and CreateDate between #{Sep} and #{Oct})   SepCount,
+               (select count(*)
+                from violation
+                where DeleteFlag = 0 and CreateDate between #{Oct} and #{Nov})   OctCount,
+               (select count(*)
+                from violation
+                where DeleteFlag = 0 and CreateDate between #{Nov} and #{Dec})   NovCount
+        from violation
+        where DeleteFlag = 0
+          and CreateDate between #{Dec} and #{EndDec}
+    </select>
+
+    <!--年内每月所有事故记录-->
+    <select id="getmonthcount4" resultMap="BaseResultMap1" parameterType="com.model.Month">
+        SELECT count(*)                                                                    DecCount,
+               (select count(*)
+                FROM accident
+                where DeleteFlag = 0 and CreateDate between #{Jan} and #{Feb}) JanCount,
+               (select count(*)
+                FROM accident
+                where DeleteFlag = 0 and CreateDate between #{Feb} and #{Mar}) FebCount,
+               (select count(*)
+                FROM accident
+                where DeleteFlag = 0 and CreateDate between #{Mar} and #{Apr}) MarCount,
+               (select count(*)
+                FROM accident
+                where DeleteFlag = 0 and CreateDate between #{Apr} and #{May}) AprCount,
+               (select count(*)
+                FROM accident
+                where DeleteFlag = 0 and CreateDate between #{May} and #{Jun}) MayCount,
+               (select count(*)
+                FROM accident
+                where DeleteFlag = 0 and CreateDate between #{Jun} and #{Jul}) JunCount,
+               (select count(*)
+                FROM accident
+                where DeleteFlag = 0 and CreateDate between #{Jul} and #{Aug}) JulCount,
+               (SELECT count(*)
+                from accident
+                where DeleteFlag = 0 and CreateDate between #{Aug} and #{Sep})   AugCount,
+               (select count(*)
+                from accident
+                where DeleteFlag = 0 and CreateDate between #{Sep} and #{Oct})   SepCount,
+               (select count(*)
+                from accident
+                where DeleteFlag = 0 and CreateDate between #{Oct} and #{Nov})   OctCount,
+               (select count(*)
+                from accident
+                where DeleteFlag = 0 and CreateDate between #{Nov} and #{Dec})   NovCount
+        from accident
+        where DeleteFlag = 0
+          and CreateDate between #{Dec} and #{EndDec}
+    </select>
+</mapper>
